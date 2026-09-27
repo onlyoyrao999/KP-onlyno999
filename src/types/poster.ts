@@ -229,6 +229,7 @@ export interface LookbookSheetData {
   brandOrTitleCn: string;
   brandOrTitleEn: string;
   seasonTag: string;
+  aspectRatio?: '16:9' | '4:3' | '3:2' | '21:9'; // 默认 16:9 宽画幅
   modelSpecs: {
     genderAge: string;
     expression: string;

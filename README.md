@@ -2,29 +2,30 @@
 
 > **Skill 技能标识**: `KP-onlyno999`  
 > **核心引擎**: 三模态智能自适应切换 (Lookbook ⇄ Character Design Sheet ⇄ Naturalist Infographic)  
-> **核心能力**: 电商模特四联打版 ｜ **鞋履从头到脚全画幅锁死** ｜ 角色三视图与服装平铺 ｜ 1x5 材质微距矩阵 ｜ 九宫格科普图鉴 ｜ 多视角一致性 Prompt 工具包 ｜ 4K高清导出
+> **核心能力**: 电商模特四联打版 ｜ **默认 16:9 宽屏画幅** ｜ **鞋履从头到脚全画幅锁死** ｜ 角色三视图与服装平铺 ｜ 1x5 材质微距矩阵 ｜ 九宫格科普图鉴 ｜ 多视角一致性 Prompt 工具包 ｜ 4K高清导出
 
 ---
 
 ## 🚀 1. 三模态智能自适应切换体系 (Tri-Engine Pipeline)
 
 ```
-                       ┌─► [服装单品/模特上身图] ──► 【模式一：电商模特四联打版图 (含鞋履锁死)】(Lookbook Tetradic Sheet)
+                       ┌─► [服装单品/模特上身图] ──► 【模式一：电商模特四联打版图 (16:9·含鞋履锁死)】(Lookbook Tetradic Sheet)
 [ 上传底图 / 提示词 ] ──┼─► [人物肖像/古风二次元] ──► 【模式二：角色概念与服饰解构】(Character Design Sheet)
                        └─► [动植物/昆虫/自然摄影] ──► 【模式三：自然科学九宫格图鉴】(Naturalist Infographic)
 ```
 
 ---
 
-## 👔 2. 模式一：电商模特拍摄规范图 (E-commerce Lookbook & Footwear Lock)
+## 👔 2. 模式一：电商模特拍摄规范图 (E-commerce Lookbook 16:9 & Footwear Lock)
 
-- **版式结构：四联分栏式拼图 (1:1:1:1 绝对规整纵向分割)**：
+- **默认 16:9 商业宽屏与四联分栏式拼图 (1:1:1:1 绝对规整纵向分割)**：
+  - **默认画幅比例**：**16:9 宽画幅**（注入 `--ar 16:9`），打造专业级商品打版展板。
   - **Column 01（大头照特写）**：展示面部轮廓、帽子帽檐弧度、T恤圆领高度与锁骨贴合度。
   - **Column 02（正面全身 · 含鞋履）**：从头顶帽子到鞋底完全可见，展示正面版型、裤子口袋、完整双脚鞋履系带与大底。
   - **Column 03（90°侧面全身 · 含鞋侧线）**：从头到脚完整展示袖长、帽子侧面深度、裤侧立体工装口袋厚度、鞋身侧边流线与鞋底平贴地面。
   - **Column 04（背面全身 · 含鞋跟）**：展示肩线平整度、无多余褶皱、后腰口袋、后裤管剪裁与球鞋后跟结构。
-- **【核心突破】鞋履设计与构图锁死 (Footwear Design & Head-to-Toe Lock)**：
-  - 彻底解决 AI 裁切脚踝或丢失鞋子问题，强制注入 `(full length head-to-toe shot, complete shoes visible touching floor, no cut-off legs)` 锁定词。
+- **【核心突破】鞋履设计与从头到脚构图锁死 (Footwear Design & Head-to-Toe Lock)**：
+  - 彻底解决 AI 裁切脚踝或丢失鞋子问题，强制注入 `(full length head-to-toe shot, complete shoes visible touching floor with contact shadow, no cut-off legs, no cropped feet, entire footwear visible)` 锁定词。
   - 内置鞋型设计器（复古黑白板鞋、机能战术工装靴、德训鞋），明确鞋面皮质、生胶大底厚度与侧边线条。
 - **模特与服装标准化**：中性自然克制表情，真实还原纯棉/斜纹/尼龙面料质感。
 - **影棚级一致性光影**：5500K 柔光箱双侧布光，纯浅灰白背景（`#e6e8ec`），85mm 人像定焦零透视畸变。
