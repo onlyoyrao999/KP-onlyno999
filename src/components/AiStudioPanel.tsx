@@ -1,15 +1,32 @@
 import React, { useState, useRef } from "react";
-import { Upload, Wand2, Sparkles, Image as ImageIcon, RefreshCw, X, Check, Lightbulb, Compass } from "lucide-react";
-import { PosterData } from "../types/poster";
+import { Upload, Wand2, Sparkles, Image as ImageIcon, RefreshCw, X, Check, User, Leaf, Shirt } from "lucide-react";
+import { PosterData, CharacterDesignSheetData, LookbookSheetData } from "../types/poster";
 
 interface AiStudioPanelProps {
   isOpen: boolean;
   onClose: () => void;
-  onPosterGenerated: (poster: PosterData, customImage?: string) => void;
+  onGenerated: (data: { mode: 'nature' | 'character' | 'lookbook'; poster?: PosterData; characterSheet?: CharacterDesignSheetData; lookbookSheet?: LookbookSheetData; customImage?: string }) => void;
 }
 
 const SAMPLE_INSPIRATIONS = [
   {
+    type: "lookbook",
+    title: "纯黑极简工装全套",
+    desc: "1:1:1:1 四联分栏 · 大头/正面/侧面/背面 一眼看全",
+    icon: "👔",
+    prompt: "纯黑极简工装全套服装打版展示图，四联分栏式拼图(1:1:1:1绝对规整纵向分割)，同一东亚男模，纯黑落肩T恤+工装裤+鸭舌帽+球鞋，纯浅灰影棚背景柔光，包含大头照、正面全身、侧面照、背面照与深灰底部标示条",
+    theme: "obsidian-slate"
+  },
+  {
+    type: "character",
+    title: "竹影琴师 · 顾清弦",
+    desc: "三视图 + 6层汉服平铺解构 + 金丝竹纹刺绣",
+    icon: "🎋",
+    prompt: "国风竹影琴师角色设定集，包含动态怀抱古琴主立绘、侧面背面中立三视图、6层汉服平铺解构（月白内衽、墨竹大袍、织金腰封、纱扇披帛）、底部1x5刺绣玉簪靴履微观矩阵",
+    theme: "antique-parchment"
+  },
+  {
+    type: "nature",
     title: "蜂鸟科普竖版展板",
     desc: "高精解剖、极速振翅与美洲迁徙",
     icon: "🌸",
@@ -17,42 +34,31 @@ const SAMPLE_INSPIRATIONS = [
     theme: "botanical-cream"
   },
   {
-    title: "帝王蝶横跨万里迁徙",
-    desc: "完全变态、微米几丁鳞片与马利筋毒素",
-    icon: "🦋",
-    prompt: "黑脉金斑蝶(帝王蝶)科普图鉴海报，包含卵幼虫蛹成虫四变态过程、微米鳞片结构、马利筋强心苷毒素、4000公里横跨北美迁徙路线与米却肯越冬群聚",
-    theme: "antique-parchment"
+    type: "character",
+    title: "天衍剑宗 · 凌无尘",
+    desc: "御剑动态 + 战袍解构 + 寒冰剑纹神兵",
+    icon: "⚔️",
+    prompt: "仙侠剑修宗主角色概念设定集，御剑飞行主立绘、三视图解构、踏虚仙氅与蛟皮战靴解构、万年玄冰灵剑铭文与宗门玉牌特写",
+    theme: "cyanotype-blue"
   },
   {
+    type: "nature",
     title: "深海蓝鲸与次声波",
     desc: "地球最大生命体、潜水心动过缓与磷虾滤食",
     icon: "🐋",
     prompt: "深海蓝鲸巨型生物科普海报，包含体型与大象对比、喉腹褶与鲸须滤食、10-40Hz低频次声波SOFAR深海传播、潜水心动过缓(2-4bpm)与鲸落百年绿洲",
     theme: "cyanotype-blue"
-  },
-  {
-    title: "活化石银杏与亿年演化",
-    desc: "二叠纪活化石、扇形二叉脉与抗逆抗辐射",
-    icon: "🍃",
-    prompt: "植物界活化石银杏(Ginkgo biloba)植物图鉴海报，包含侏罗纪演化树、扇形叶二叉状叶脉微观、雌雄异株胚珠结构、黄酮类药用成分与长寿抗逆机理",
-    theme: "botanical-cream"
-  },
-  {
-    title: "深海发光水母与生物荧光",
-    desc: "绿色荧光蛋白GFP、平衡囊感官与水母脉冲",
-    icon: "🪼",
-    prompt: "深海发光水母(Aequorea victoria)科普图鉴，包含GFP绿色荧光蛋白发光化学机理、伞状体喷流推进动力学、触手刺细胞射刺微观与海洋深层微发光生态",
-    theme: "obsidian-slate"
   }
 ];
 
 export const AiStudioPanel: React.FC<AiStudioPanelProps> = ({
   isOpen,
   onClose,
-  onPosterGenerated,
+  onGenerated,
 }) => {
   const [baseImage, setBaseImage] = useState<string | null>(null);
   const [customPrompt, setCustomPrompt] = useState<string>("");
+  const [generationMode, setGenerationMode] = useState<'auto' | 'nature' | 'character' | 'lookbook'>('auto');
   const [selectedTheme, setSelectedTheme] = useState<string>("botanical-cream");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingStep, setLoadingStep] = useState<string>("");
@@ -85,9 +91,9 @@ export const AiStudioPanel: React.FC<AiStudioPanelProps> = ({
 
     const steps = [
       "正在调用 Gemini 3.8 进行多模态视觉识别与特征萃取...",
-      "深度分析主体生物形态、解剖构造与生态习性...",
-      "精密生成9宫格科学数据模块与双语图鉴信息...",
-      "匹配自然美学色调与图表比例，渲染高质感海报..."
+      "自动判别类型（电商打版 Lookbook / 角色立绘设定集 / 自然科学图鉴）...",
+      "计算版型比例 / 四联分栏 / 三视图 / 九宫格结构...",
+      "渲染生成高精度工业级规范图鉴..."
     ];
 
     let stepIdx = 0;
@@ -103,19 +109,26 @@ export const AiStudioPanel: React.FC<AiStudioPanelProps> = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           imageBase64: baseImage,
-          customPrompt: customPrompt || (baseImage ? "基于底图主体生成博物馆级自然科学科普图鉴海报" : "蜂鸟科普竖版展板"),
+          customPrompt: customPrompt || (baseImage ? "基于底图特征生成最佳图鉴海报" : "纯黑全套极简工装电商上身打版规范"),
           themeStyle: selectedTheme,
+          forcedMode: generationMode === "auto" ? undefined : generationMode,
         }),
       });
 
       const data = await res.json();
       clearInterval(timer);
 
-      if (!data.success || !data.poster) {
-        throw new Error(data.error || "生成海报数据失败，请重试");
+      if (!data.success) {
+        throw new Error(data.error || "生成数据失败，请重试");
       }
 
-      onPosterGenerated(data.poster, baseImage || undefined);
+      onGenerated({
+        mode: data.mode,
+        poster: data.poster,
+        characterSheet: data.characterSheet,
+        lookbookSheet: data.lookbookSheet,
+        customImage: baseImage || undefined,
+      });
       onClose();
     } catch (err: any) {
       clearInterval(timer);
@@ -138,24 +151,77 @@ export const AiStudioPanel: React.FC<AiStudioPanelProps> = ({
         </button>
 
         {/* Modal Header */}
-        <div className="mb-6 space-y-1">
+        <div className="mb-5 space-y-1">
           <div className="flex items-center gap-2 text-emerald-400 font-['Space_Mono',monospace] text-xs uppercase font-bold tracking-wider">
             <Wand2 className="w-4 h-4 text-emerald-400" />
-            <span>AI Naturalist Vision Studio</span>
+            <span>AI Multimodal Studio (KP-onlyno999)</span>
           </div>
           <h2 className="font-['Noto_Serif_SC',serif] text-2xl font-black text-white">
-            底图智能重塑 · 博物馆级科普海报生成
+            底图智能重塑 · 自然科普 / 角色设定 / 电商Lookbook
           </h2>
           <p className="text-xs text-slate-400 leading-relaxed font-['Lora',serif]">
-            上传任意动植物、微观、水生或自然摄影底图，AI 将按标准九宫格科普图鉴体系，提取形态解剖、运动机能、食物占比与迁徙繁育等9大模块并生成高颜值信息海报。
+            上传任意底图或输入主题，AI 自动切换：动植物生【九宫格科普图鉴】、人物立绘生【三视图分层设定集】、服装单品生【四联 1:1:1:1 模特打版规范图】。
           </p>
+        </div>
+
+        {/* Mode Selector Toggle */}
+        <div className="mb-4">
+          <label className="block text-xs font-semibold text-emerald-300 uppercase tracking-wider mb-2 font-['Space_Mono',monospace]">
+            1. 智能识别或指定版式引擎
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <button
+              onClick={() => setGenerationMode('auto')}
+              className={`py-2 px-2.5 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1 ${
+                generationMode === 'auto'
+                  ? 'bg-emerald-700 text-white border-emerald-400 shadow-sm'
+                  : 'bg-[#1a241f] text-slate-400 border-slate-800 hover:border-slate-700'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>自动识别底图</span>
+            </button>
+            <button
+              onClick={() => setGenerationMode('lookbook')}
+              className={`py-2 px-2.5 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1 ${
+                generationMode === 'lookbook'
+                  ? 'bg-emerald-700 text-white border-emerald-400 shadow-sm'
+                  : 'bg-[#1a241f] text-slate-400 border-slate-800 hover:border-slate-700'
+              }`}
+            >
+              <Shirt className="w-3.5 h-3.5" />
+              <span>电商四联打版</span>
+            </button>
+            <button
+              onClick={() => setGenerationMode('character')}
+              className={`py-2 px-2.5 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1 ${
+                generationMode === 'character'
+                  ? 'bg-emerald-700 text-white border-emerald-400 shadow-sm'
+                  : 'bg-[#1a241f] text-slate-400 border-slate-800 hover:border-slate-700'
+              }`}
+            >
+              <User className="w-3.5 h-3.5" />
+              <span>角色立绘设定</span>
+            </button>
+            <button
+              onClick={() => setGenerationMode('nature')}
+              className={`py-2 px-2.5 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1 ${
+                generationMode === 'nature'
+                  ? 'bg-emerald-700 text-white border-emerald-400 shadow-sm'
+                  : 'bg-[#1a241f] text-slate-400 border-slate-800 hover:border-slate-700'
+              }`}
+            >
+              <Leaf className="w-3.5 h-3.5" />
+              <span>自然九宫格</span>
+            </button>
+          </div>
         </div>
 
         {/* Upload Zone */}
         <div className="space-y-4">
           <div>
             <label className="block text-xs font-semibold text-emerald-300 uppercase tracking-wider mb-2 font-['Space_Mono',monospace]">
-              1. 提供底图 (Image Base - 可选)
+              2. 上传底图 (摄影、服装上身图、插画草图)
             </label>
             
             {baseImage ? (
@@ -164,7 +230,7 @@ export const AiStudioPanel: React.FC<AiStudioPanelProps> = ({
                   src={baseImage}
                   alt="Uploaded Base"
                   referrerPolicy="no-referrer"
-                  className="max-h-48 rounded-xl object-contain"
+                  className="max-h-44 rounded-xl object-contain"
                 />
                 <button
                   onClick={() => setBaseImage(null)}
@@ -177,7 +243,7 @@ export const AiStudioPanel: React.FC<AiStudioPanelProps> = ({
             ) : (
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="cursor-pointer border-2 border-dashed border-[#2d4d3c] hover:border-emerald-500/80 rounded-2xl p-6 text-center transition-all bg-[#1a241f]/60 hover:bg-[#1f2d26]"
+                className="cursor-pointer border-2 border-dashed border-[#2d4d3c] hover:border-emerald-500/80 rounded-2xl p-5 text-center transition-all bg-[#1a241f]/60 hover:bg-[#1f2d26]"
               >
                 <input
                   ref={fileInputRef}
@@ -186,12 +252,12 @@ export const AiStudioPanel: React.FC<AiStudioPanelProps> = ({
                   onChange={handleFileUpload}
                   className="hidden"
                 />
-                <Upload className="w-8 h-8 text-emerald-400 mx-auto mb-2 opacity-80" />
+                <Upload className="w-7 h-7 text-emerald-400 mx-auto mb-1.5 opacity-80" />
                 <p className="text-xs font-semibold text-slate-200">
                   点击上传或拖拽底图至此处
                 </p>
-                <p className="text-[10px] text-slate-400 mt-1">
-                  支持 JPG, PNG, WebP (支持鸟类、昆虫、花卉、海洋生物、宠物摄影或素描草图)
+                <p className="text-[10px] text-slate-400 mt-0.5">
+                  自动提取版型、三视图、九宫格数据或四联打版角度
                 </p>
               </div>
             )}
@@ -199,11 +265,9 @@ export const AiStudioPanel: React.FC<AiStudioPanelProps> = ({
 
           {/* Quick Inspirations */}
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-semibold text-emerald-300 uppercase tracking-wider font-['Space_Mono',monospace]">
-                2. 或选择精选科普灵感主题
-              </label>
-            </div>
+            <label className="block text-xs font-semibold text-emerald-300 uppercase tracking-wider mb-2 font-['Space_Mono',monospace]">
+              3. 或选择预设灵感模板
+            </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {SAMPLE_INSPIRATIONS.map((item, i) => (
                 <button
@@ -211,6 +275,7 @@ export const AiStudioPanel: React.FC<AiStudioPanelProps> = ({
                   onClick={() => {
                     setCustomPrompt(item.prompt);
                     setSelectedTheme(item.theme);
+                    setGenerationMode(item.type as any);
                   }}
                   className={`text-left p-2.5 rounded-xl border transition-all ${
                     customPrompt === item.prompt
@@ -218,9 +283,14 @@ export const AiStudioPanel: React.FC<AiStudioPanelProps> = ({
                       : "border-slate-800 bg-[#17201a] text-slate-300 hover:border-slate-700"
                   }`}
                 >
-                  <div className="flex items-center gap-1.5 font-bold text-xs">
-                    <span>{item.icon}</span>
-                    <span>{item.title}</span>
+                  <div className="flex items-center justify-between font-bold text-xs">
+                    <div className="flex items-center gap-1.5">
+                      <span>{item.icon}</span>
+                      <span>{item.title}</span>
+                    </div>
+                    <span className="text-[9px] px-1 py-0.2 rounded bg-slate-800 text-slate-400 font-mono">
+                      {item.type === 'lookbook' ? '电商Lookbook' : item.type === 'character' ? '角色设定' : '自然科普'}
+                    </span>
                   </div>
                   <p className="text-[10px] text-slate-400 mt-1 line-clamp-1">{item.desc}</p>
                 </button>
@@ -230,15 +300,15 @@ export const AiStudioPanel: React.FC<AiStudioPanelProps> = ({
 
           {/* Custom Prompt Input */}
           <div>
-            <label className="block text-xs font-semibold text-emerald-300 uppercase tracking-wider mb-2 font-['Space_Mono',monospace]">
-              3. 自定义重点或设计要求
+            <label className="block text-xs font-semibold text-emerald-300 uppercase tracking-wider mb-1.5 font-['Space_Mono',monospace]">
+              4. 定制细节或需求描述
             </label>
             <textarea
               value={customPrompt}
               onChange={(e) => setCustomPrompt(e.target.value)}
-              placeholder="例如：请按照九宫格科普图鉴风格，重点突出这只变色龙的色素细胞结构、捕食弹射舌头、360度独立旋转眼球..."
-              rows={3}
-              className="w-full rounded-xl bg-[#0e1411] border border-[#2b4435] text-xs text-slate-200 p-3 focus:outline-hidden focus:border-emerald-500 placeholder:text-slate-600"
+              placeholder="例如：全套驼色羊绒大衣搭配高领毛衣，要求四联展示大头面部、正面腰身、侧面口袋厚度与后背肩线..."
+              rows={2}
+              className="w-full rounded-xl bg-[#0e1411] border border-[#2b4435] text-xs text-slate-200 p-2.5 focus:outline-hidden focus:border-emerald-500 placeholder:text-slate-600"
             />
           </div>
 
@@ -251,8 +321,8 @@ export const AiStudioPanel: React.FC<AiStudioPanelProps> = ({
 
           {/* Loading Animation Status */}
           {isLoading && (
-            <div className="p-4 rounded-2xl bg-emerald-950/50 border border-emerald-800/60 text-center space-y-2">
-              <RefreshCw className="w-6 h-6 text-emerald-400 mx-auto animate-spin" />
+            <div className="p-3.5 rounded-2xl bg-emerald-950/50 border border-emerald-800/60 text-center space-y-1.5">
+              <RefreshCw className="w-5 h-5 text-emerald-400 mx-auto animate-spin" />
               <p className="text-xs font-semibold text-emerald-300 font-mono animate-pulse">
                 {loadingStep}
               </p>
@@ -268,12 +338,12 @@ export const AiStudioPanel: React.FC<AiStudioPanelProps> = ({
             {isLoading ? (
               <>
                 <RefreshCw className="w-4 h-4 animate-spin" />
-                <span>正在重塑科普图鉴海报...</span>
+                <span>正在重塑图鉴海报...</span>
               </>
             ) : (
               <>
                 <Sparkles className="w-4 h-4 text-emerald-200" />
-                <span>一键智能生成 · 9宫格自然科学海报</span>
+                <span>一键智能生成 · 规范设定海报</span>
               </>
             )}
           </button>

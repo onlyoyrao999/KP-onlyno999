@@ -26,27 +26,28 @@ const ai = new GoogleGenAI({
   },
 });
 
-// JSON Schema for Structured Poster Output
+// 1. Nature Poster Schema
 const posterResponseSchema = {
   type: Type.OBJECT,
   properties: {
-    titleCn: { type: Type.STRING, description: "主标题（中文，如：蜂鸟）" },
-    titleEn: { type: Type.STRING, description: "主标题（英文，如：Hummingbird）" },
-    subTitleCn: { type: Type.STRING, description: "副标题中文（如：以微小之躯，连接广阔的自然）" },
-    subTitleEn: { type: Type.STRING, description: "副标题英文（如：Tiny Wings, A Wilder World）" },
-    taxonomyCn: { type: Type.STRING, description: "分类学/纲目中文（如：小型鸟类 / 蜂鸟科）" },
-    taxonomyEn: { type: Type.STRING, description: "分类学英文（如：Aves / Trochilidae）" },
-    introCn: { type: Type.STRING, description: "科普导言（中文两句话概括）" },
-    introEn: { type: Type.STRING, description: "科普导言（英文）" },
-    keywordsCn: { type: Type.STRING, description: "关键词组（如：花朵 ｜ 飞行 ｜ 生命 ｜ 更美好的地球）" },
-    keywordsEn: { type: Type.STRING, description: "英文关键词（如：Flora | Aerodynamics | Vitality | Planet）" },
+    mode: { type: Type.STRING },
+    titleCn: { type: Type.STRING },
+    titleEn: { type: Type.STRING },
+    subTitleCn: { type: Type.STRING },
+    subTitleEn: { type: Type.STRING },
+    taxonomyCn: { type: Type.STRING },
+    taxonomyEn: { type: Type.STRING },
+    introCn: { type: Type.STRING },
+    introEn: { type: Type.STRING },
+    keywordsCn: { type: Type.STRING },
+    keywordsEn: { type: Type.STRING },
     distribution: {
       type: Type.OBJECT,
       properties: {
-        titleCn: { type: Type.STRING, description: "分布模块中文标题，如：分布：美洲" },
-        titleEn: { type: Type.STRING, description: "分布英文标题，如：Distribution: The Americas" },
-        regionCn: { type: Type.STRING, description: "主要生境与区域" },
-        regionEn: { type: Type.STRING, description: "Region description in English" },
+        titleCn: { type: Type.STRING },
+        titleEn: { type: Type.STRING },
+        regionCn: { type: Type.STRING },
+        regionEn: { type: Type.STRING },
         legend: {
           type: Type.ARRAY,
           items: {
@@ -67,35 +68,31 @@ const posterResponseSchema = {
     hero: {
       type: Type.OBJECT,
       properties: {
-        quoteCn: { type: Type.STRING, description: "主视觉手写体短句，如：小小的身躯也能创造巨大的影响" },
-        quoteEn: { type: Type.STRING, description: "英文短句，如：Small Bird - Big Difference" },
-        badgeTextCn: { type: Type.STRING, description: "徽章或视觉标识文字" },
+        quoteCn: { type: Type.STRING },
+        quoteEn: { type: Type.STRING },
+        badgeTextCn: { type: Type.STRING },
         badgeTextEn: { type: Type.STRING },
-        accentColor: { type: Type.STRING, description: "建议的生动主题色HEX，如 #10b981" }
+        accentColor: { type: Type.STRING }
       },
       required: ["quoteCn", "quoteEn"]
     },
     modules: {
       type: Type.ARRAY,
-      description: "9个模块化科学信息卡片",
       items: {
         type: Type.OBJECT,
         properties: {
-          number: { type: Type.STRING, description: "序号，如 01, 02... 09" },
-          titleCn: { type: Type.STRING, description: "中文模块标题，如：体型与体重" },
-          titleEn: { type: Type.STRING, description: "英文模块标题，如：SIZE & WEIGHT" },
-          summaryCn: { type: Type.STRING, description: "正文短句科普" },
-          summaryEn: { type: Type.STRING, description: "English summary text" },
-          type: {
-            type: Type.STRING,
-            description: "模块交互/可视化类型：size_comparison | anatomy | frequency_motion | bill_microscope | bar_chart | ecg_pulse | route_map | nest_diagram | species_grid"
-          },
+          number: { type: Type.STRING },
+          titleCn: { type: Type.STRING },
+          titleEn: { type: Type.STRING },
+          summaryCn: { type: Type.STRING },
+          summaryEn: { type: Type.STRING },
+          type: { type: Type.STRING },
           details: {
             type: Type.OBJECT,
             properties: {
-              primaryMetric: { type: Type.STRING, description: "突出展示的主数据指标" },
-              secondaryMetric: { type: Type.STRING, description: "辅助数据指标" },
-              tags: { type: Type.ARRAY, items: { type: Type.STRING }, description: "关键短语/标签" },
+              primaryMetric: { type: Type.STRING },
+              secondaryMetric: { type: Type.STRING },
+              tags: { type: Type.ARRAY, items: { type: Type.STRING } },
               chartItems: {
                 type: Type.ARRAY,
                 items: {
@@ -144,21 +141,21 @@ const posterResponseSchema = {
     footer: {
       type: Type.OBJECT,
       properties: {
-        quoteLeftCn: { type: Type.STRING, description: "底部左侧标语，如：更丰富的花朵，更多生生不息的明天" },
-        quoteLeftEn: { type: Type.STRING, description: "底部左侧英文，如：More Flowers, Brighter Tomorrows" },
-        metaCn: { type: Type.STRING, description: "底部右侧数据说明，如：数据范围：代表物种差异，自然历史图鉴整理" },
-        metaEn: { type: Type.STRING, description: "底部右侧英文标语，如：NATURE CONNECTS US ALL · 2024 UPDATE" }
+        quoteLeftCn: { type: Type.STRING },
+        quoteLeftEn: { type: Type.STRING },
+        metaCn: { type: Type.STRING },
+        metaEn: { type: Type.STRING }
       },
       required: ["quoteLeftCn", "quoteLeftEn", "metaCn", "metaEn"]
     },
     colorPalette: {
       type: Type.OBJECT,
       properties: {
-        primary: { type: Type.STRING, description: "主品牌墨绿或大地色HEX" },
-        secondary: { type: Type.STRING, description: "次级自然色HEX" },
-        accent: { type: Type.STRING, description: "点缀亮色HEX（如花蜜红/珊瑚橘/金属紫）" },
-        cardBg: { type: Type.STRING, description: "卡片背景色HEX" },
-        bgTone: { type: Type.STRING, description: "背景基调描述" }
+        primary: { type: Type.STRING },
+        secondary: { type: Type.STRING },
+        accent: { type: Type.STRING },
+        cardBg: { type: Type.STRING },
+        bgTone: { type: Type.STRING }
       },
       required: ["primary", "secondary", "accent", "cardBg"]
     }
@@ -166,124 +163,396 @@ const posterResponseSchema = {
   required: ["titleCn", "titleEn", "subTitleCn", "subTitleEn", "taxonomyCn", "introCn", "distribution", "hero", "modules", "footer", "colorPalette"]
 };
 
-// POST: Analyze image and generate scientific infographic poster data
+// 2. Character Concept Sheet Schema
+const characterResponseSchema = {
+  type: Type.OBJECT,
+  properties: {
+    mode: { type: Type.STRING },
+    id: { type: Type.STRING },
+    characterNameCn: { type: Type.STRING },
+    characterNameEn: { type: Type.STRING },
+    titleCn: { type: Type.STRING },
+    titleEn: { type: Type.STRING },
+    identityTag: { type: Type.STRING },
+    quoteCn: { type: Type.STRING },
+    quoteEn: { type: Type.STRING },
+    eraOrStyle: { type: Type.STRING },
+    colorPalette: {
+      type: Type.OBJECT,
+      properties: {
+        primary: { type: Type.STRING },
+        secondary: { type: Type.STRING },
+        accent: { type: Type.STRING },
+        inkTone: { type: Type.STRING },
+        paperTone: { type: Type.STRING },
+        swatches: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              name: { type: Type.STRING },
+              hex: { type: Type.STRING }
+            }
+          }
+        }
+      },
+      required: ["primary", "secondary", "accent", "swatches"]
+    },
+    views: {
+      type: Type.OBJECT,
+      properties: {
+        dynamicPose: {
+          type: Type.OBJECT,
+          properties: {
+            titleCn: { type: Type.STRING },
+            titleEn: { type: Type.STRING },
+            desc: { type: Type.STRING },
+            stanceNotes: { type: Type.ARRAY, items: { type: Type.STRING } },
+            weaponOrProp: { type: Type.STRING }
+          },
+          required: ["titleCn", "desc", "stanceNotes", "weaponOrProp"]
+        },
+        auxiliaryViews: {
+          type: Type.OBJECT,
+          properties: {
+            titleCn: { type: Type.STRING },
+            titleEn: { type: Type.STRING },
+            sideNotes: { type: Type.STRING },
+            backNotes: { type: Type.STRING }
+          },
+          required: ["titleCn", "sideNotes", "backNotes"]
+        }
+      },
+      required: ["dynamicPose", "auxiliaryViews"]
+    },
+    costumeDeconstruction: {
+      type: Type.OBJECT,
+      properties: {
+        titleCn: { type: Type.STRING },
+        titleEn: { type: Type.STRING },
+        intro: { type: Type.STRING },
+        layers: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              order: { type: Type.NUMBER },
+              nameCn: { type: Type.STRING },
+              nameEn: { type: Type.STRING },
+              fabric: { type: Type.STRING },
+              colorDesc: { type: Type.STRING },
+              features: { type: Type.STRING },
+              icon: { type: Type.STRING }
+            }
+          }
+        }
+      },
+      required: ["titleCn", "layers"]
+    },
+    materialGrid: {
+      type: Type.OBJECT,
+      properties: {
+        titleCn: { type: Type.STRING },
+        titleEn: { type: Type.STRING },
+        items: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              id: { type: Type.STRING },
+              titleCn: { type: Type.STRING },
+              titleEn: { type: Type.STRING },
+              textureType: { type: Type.STRING },
+              description: { type: Type.STRING },
+              highlightColor: { type: Type.STRING },
+              magnification: { type: Type.STRING }
+            }
+          }
+        }
+      },
+      required: ["titleCn", "items"]
+    },
+    sealText: { type: Type.STRING },
+    artDirectionNotes: { type: Type.STRING },
+    promptBundle: {
+      type: Type.OBJECT,
+      properties: {
+        fullSheetPrompt: { type: Type.STRING },
+        dynamicPosePrompt: { type: Type.STRING },
+        turnaroundPrompt: { type: Type.STRING },
+        materialMacroPrompt: { type: Type.STRING }
+      },
+      required: ["fullSheetPrompt", "dynamicPosePrompt", "turnaroundPrompt", "materialMacroPrompt"]
+    }
+  },
+  required: ["characterNameCn", "titleCn", "identityTag", "quoteCn", "views", "costumeDeconstruction", "materialGrid", "promptBundle"]
+};
+
+// 3. E-commerce Lookbook Schema
+const lookbookResponseSchema = {
+  type: Type.OBJECT,
+  properties: {
+    mode: { type: Type.STRING, description: "固定为 'lookbook'" },
+    id: { type: Type.STRING },
+    brandOrTitleCn: { type: Type.STRING, description: "展示标题，如：纯黑极简工装全套 · 上身打版规范" },
+    brandOrTitleEn: { type: Type.STRING, description: "英文标题" },
+    seasonTag: { type: Type.STRING, description: "季度/规范标签，如：SS24 打版规范 · 商业商品图标准 (1:1:1:1)" },
+    modelSpecs: {
+      type: Type.OBJECT,
+      properties: {
+        genderAge: { type: Type.STRING },
+        expression: { type: Type.STRING },
+        hairgrooming: { type: Type.STRING }
+      },
+      required: ["genderAge", "expression", "hairgrooming"]
+    },
+    outfitBreakdown: {
+      type: Type.OBJECT,
+      properties: {
+        titleCn: { type: Type.STRING },
+        items: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              nameCn: { type: Type.STRING },
+              nameEn: { type: Type.STRING },
+              fabric: { type: Type.STRING },
+              color: { type: Type.STRING },
+              fitDesc: { type: Type.STRING }
+            }
+          }
+        }
+      },
+      required: ["titleCn", "items"]
+    },
+    lightingStudio: {
+      type: Type.OBJECT,
+      properties: {
+        lightingType: { type: Type.STRING },
+        background: { type: Type.STRING },
+        lensSpecs: { type: Type.STRING }
+      },
+      required: ["lightingType", "background", "lensSpecs"]
+    },
+    columns: {
+      type: Type.ARRAY,
+      description: "固定4个分栏：1.大头照 2.正面全身 3.侧面照 4.背面照",
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          colIndex: { type: Type.NUMBER },
+          shotType: { type: Type.STRING },
+          labelCn: { type: Type.STRING },
+          labelEn: { type: Type.STRING },
+          focusAreaCn: { type: Type.STRING },
+          focusAreaEn: { type: Type.STRING },
+          shotRatio: { type: Type.STRING },
+          keyDetails: { type: Type.ARRAY, items: { type: Type.STRING } }
+        },
+        required: ["colIndex", "shotType", "labelCn", "labelEn", "focusAreaCn", "keyDetails"]
+      }
+    },
+    colorPalette: {
+      type: Type.OBJECT,
+      properties: {
+        primaryColor: { type: Type.STRING },
+        backgroundGray: { type: Type.STRING },
+        darkBarColor: { type: Type.STRING },
+        swatches: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              name: { type: Type.STRING },
+              hex: { type: Type.STRING }
+            }
+          }
+        }
+      },
+      required: ["primaryColor", "backgroundGray", "darkBarColor", "swatches"]
+    },
+    promptBundle: {
+      type: Type.OBJECT,
+      properties: {
+        tetradicCollagePrompt: { type: Type.STRING, description: "四联总拼图 Prompt" },
+        headshotPrompt: { type: Type.STRING, description: "单独大头照 Prompt" },
+        frontShotPrompt: { type: Type.STRING, description: "单独正面照 Prompt" },
+        profileShotPrompt: { type: Type.STRING, description: "单独侧面照 Prompt" },
+        backShotPrompt: { type: Type.STRING, description: "单独背面照 Prompt" }
+      },
+      required: ["tetradicCollagePrompt", "headshotPrompt", "frontShotPrompt", "profileShotPrompt", "backShotPrompt"]
+    }
+  },
+  required: ["brandOrTitleCn", "modelSpecs", "outfitBreakdown", "columns", "colorPalette", "promptBundle"]
+};
+
+// Unified Analysis Endpoint: Auto-detect Nature vs Character vs Lookbook
 app.post("/api/analyze-and-generate-poster", async (req, res) => {
   try {
-    const { imageBase64, mimeType, customPrompt, themeStyle } = req.body;
+    const { imageBase64, mimeType, customPrompt, themeStyle, forcedMode } = req.body;
 
-    const systemPrompt = `你是一位世界顶级的自然历史博物馆（Natural History Museum）资深科学插画师、科普作家与视觉信息设计师。
-你的任务是将用户提供的生物、植物、矿物、天文或自然对象图像（或主题描述），重塑为具有极高艺术美感与权威科普价值的【9宫格模块化自然科学图鉴海报】（Naturalist & Botanical Science Infographic Poster）。
+    let detectedMode = forcedMode;
 
-设计风格规范：
-1. 风格定位：科普信息海报，写实自然插画风，色彩清新温润（象牙浅米白纸感、森系草木绿、暖赭石、大地色系与高饱和生态点缀色），整体氛围严谨、治愈、典雅。
-2. 结构排布：
-   - 顶部：主标题（双语大字）、副标题、分类学纲目、诗意且精准的科普导语、右上角地理分布区。
-   - 主视觉：核心主体写实描摹、生态互动（如采蜜、捕食、翱翔、共生）、动人手写体小短句。
-   - 中间区域：严格结构化的9个圆角浅色信息方框（01至09），每个包含绿色序号、中英双语标题、科学数据、解剖图解或占比柱状图。
-   - 底部：生态哲学金句、数据范围标注、大地山川与自然共融注记。
-3. 9个模块的具体规划：
-   01: 体型与体重 (SIZE & WEIGHT) - 尺寸、克重、与参照物对比
-   02: 骨骼/器官解剖结构 (ANATOMY & ADAPTATION) - 关键生理构造与运动原理
-   03: 运动机能/频率 (MOTION & FREQUENCY) - 极速振翅/潜游/奔跑/发光等动态分解
-   04: 进食器官/感官微观结构 (SPECIALIZED STRUCTURE) - 喙部/舌部/复眼/触角等微观特化
-   05: 食物组成与能量占比 (DIET & NUTRITION) - 柱状/饼状食物比例 (百分比加和为100%)
-   06: 心率/生理代谢与生命体征 (METABOLISM & VITALS) - 心跳、体温调节、休眠状态
-   07: 迁徙/领地与行为习性 (MIGRATION & BEHAVIOR) - 跨洲路线、领地巡护、社会行为
-   08: 繁殖、巢穴与幼体发育 (BREEDING & GROWTH) - 卵/胎生、巢穴直径材质、离巢孵化周期
-   09: 代表物种、生态价值与保护 (SPECIES & CONSERVATION) - 3个亚种学名与生态系统贡献
-4. 语言：中英双语严谨对照，科学术语与文学温度兼备。
-`;
+    if (!detectedMode) {
+      const checkPrompt = `判断以下输入是属于：
+1. 'lookbook' (电商模特、服装打版、四联拼图、单品穿搭展示、商拍摄影)
+2. 'character' (古风/二次元人物立绘、设定集、三视图、仙侠玄幻武侠)
+3. 'nature' (自然科学动植物、鸟类、昆虫、海洋生物、植物科普图鉴)
 
-    let userContentParts: any[] = [];
+输入信息：${customPrompt || "未提供文字描述"}
+请严格只回复一个单词：'lookbook' 或 'character' 或 'nature'。`;
 
-    if (imageBase64) {
-      userContentParts.push({
-        inlineData: {
-          data: imageBase64.replace(/^data:image\/\w+;base64,/, ""),
-          mimeType: mimeType || "image/jpeg",
-        },
+      let classificationParts: any[] = [];
+      if (imageBase64) {
+        classificationParts.push({
+          inlineData: {
+            data: imageBase64.replace(/^data:image\/\w+;base64,/, ""),
+            mimeType: mimeType || "image/jpeg",
+          },
+        });
+      }
+      classificationParts.push({ text: checkPrompt });
+
+      const classRes = await ai.models.generateContent({
+        model: "gemini-3.8-flash",
+        contents: { parts: classificationParts },
+        config: { temperature: 0.1 },
       });
-      userContentParts.push({
-        text: `请仔细观察并识别这张底图中的主体对象（若包含特定动植物、昆虫、花卉或自然景观）。
-基于这张底图的形态特征与生态细节，为其定制一份完整、极其精准且视觉高级的【9宫格自然科学科普图鉴海报】数据。
-${customPrompt ? `用户特别要求/定制方向：${customPrompt}` : ""}
-${themeStyle ? `配色偏好风格：${themeStyle}` : ""}
-请严格输出符合 schema 的 JSON 数据。`,
-      });
-    } else {
-      userContentParts.push({
-        text: `请为以下主题定制一份完整、极度详实且具有博物馆级高级感的【9宫格自然科学科普图鉴海报】数据：
-主题：${customPrompt || "蜂鸟科普竖版展板 (Hummingbird Naturalist Poster)"}
-${themeStyle ? `配色偏好风格：${themeStyle}` : ""}
-请严格输出符合 schema 的 JSON 数据。`,
-      });
+
+      const rawType = (classRes.text || "").toLowerCase().trim();
+      if (rawType.includes("lookbook")) detectedMode = "lookbook";
+      else if (rawType.includes("character")) detectedMode = "character";
+      else detectedMode = "nature";
     }
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.8-flash",
-      contents: {
-        parts: userContentParts,
-      },
-      config: {
-        systemInstruction: systemPrompt,
-        responseMimeType: "application/json",
-        responseSchema: posterResponseSchema as any,
-        temperature: 0.6,
-      },
-    });
+    // Step 2: Route to specific schema
+    if (detectedMode === "lookbook") {
+      const lookbookSystemPrompt = `你是一位世界顶级的时尚电商视觉总监与服装打版拍摄工程师（Skill: KP-onlyno999 - Lookbook Creator）。
+你的任务是将服装单品或搭配底图重塑为严格符合工业商业标准的【四联分栏式电商模特打版图鉴 (1:1:1:1 Tetradic Column Layout)】。
 
-    const responseText = response.text || "{}";
-    const posterData = JSON.parse(responseText);
+核心设计框架：
+1. 版式结构：四联分栏式拼图（1:1:1:1 绝对规整纵向分割）：
+   - 第一栏（Headshot）：大头照特写，展示面部特征、帽子细节、衣领高度。
+   - 第二栏（Torso / Front）：正面全身/半身，展示衣服正面版型、裤子口袋、穿搭比例。
+   - 第三栏（Profile）：90度侧面照，展示袖长、帽子侧面深度、裤侧立体口袋、身形侧面。
+   - 第四栏（Back）：背面全身，展示肩线、后背版型平整度、后背腰身。
+2. 模特与服装：标准化与去艺术化，中性表情，真实还原纯棉/斜纹/尼龙面料质感。
+3. 影棚光影：5500K柔光箱双侧布光，纯浅灰白背景（#e6e8ec），85mm定焦零畸变。
+4. 标签系统：每栏底部配置深灰色标示条。
+5. Prompt Bundle：强调同一模特（Same Person）、同套服装（Identical Outfit）在四张分图中的绝对一致性。`;
 
-    res.json({
-      success: true,
-      poster: posterData,
-    });
+      let userParts: any[] = [];
+      if (imageBase64) {
+        userParts.push({
+          inlineData: {
+            data: imageBase64.replace(/^data:image\/\w+;base64,/, ""),
+            mimeType: mimeType || "image/jpeg",
+          },
+        });
+      }
+      userParts.push({
+        text: `请为该服装底图/穿搭主题定制一份完整的四联电商模特打版规范数据：
+${customPrompt ? `定制要求：${customPrompt}` : "纯黑全套极简工装电商上身打版规范"}`,
+      });
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3.8-flash",
+        contents: { parts: userParts },
+        config: {
+          systemInstruction: lookbookSystemPrompt,
+          responseMimeType: "application/json",
+          responseSchema: lookbookResponseSchema as any,
+          temperature: 0.5,
+        },
+      });
+
+      const lbData = JSON.parse(response.text || "{}");
+      lbData.mode = "lookbook";
+      return res.json({
+        success: true,
+        mode: "lookbook",
+        lookbookSheet: lbData,
+      });
+    } else if (detectedMode === "character") {
+      const charSystemPrompt = `你是一位世界顶级的角色概念设计总监与国风/二次元立绘美术架构师（Skill: KP-onlyno999 - 角色设定集）。
+生成三视图主立绘（左动态+中正侧背）、服装分层解构（右上）与 1x5 材质微距特写矩阵（底部）。`;
+
+      let userParts: any[] = [];
+      if (imageBase64) {
+        userParts.push({
+          inlineData: {
+            data: imageBase64.replace(/^data:image\/\w+;base64,/, ""),
+            mimeType: mimeType || "image/jpeg",
+          },
+        });
+      }
+      userParts.push({
+        text: `请为该角色底图/主题定制一份完整的角色概念设定集与服饰解构数据：
+${customPrompt ? `用户定制要求：${customPrompt}` : "根据底图角色提炼国风/玄幻高阶立绘设定集"}`,
+      });
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3.8-flash",
+        contents: { parts: userParts },
+        config: {
+          systemInstruction: charSystemPrompt,
+          responseMimeType: "application/json",
+          responseSchema: characterResponseSchema as any,
+          temperature: 0.6,
+        },
+      });
+
+      const charData = JSON.parse(response.text || "{}");
+      charData.mode = "character";
+      return res.json({
+        success: true,
+        mode: "character",
+        characterSheet: charData,
+      });
+    } else {
+      const natureSystemPrompt = `你是一位世界顶级的自然历史博物馆资深科学插画师与信息设计师（Skill: KP-onlyno999 - 科普图鉴）。
+生成标准的【9宫格模块化自然科学图鉴海报】。`;
+
+      let userParts: any[] = [];
+      if (imageBase64) {
+        userParts.push({
+          inlineData: {
+            data: imageBase64.replace(/^data:image\/\w+;base64,/, ""),
+            mimeType: mimeType || "image/jpeg",
+          },
+        });
+      }
+      userParts.push({
+        text: `请为该自然科学底图/主题定制一份完整的9宫格科普图鉴数据：
+${customPrompt ? `用户定制要求：${customPrompt}` : "蜂鸟科普竖版展板"}
+${themeStyle ? `配色偏好风格：${themeStyle}` : ""}`,
+      });
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3.8-flash",
+        contents: { parts: userParts },
+        config: {
+          systemInstruction: natureSystemPrompt,
+          responseMimeType: "application/json",
+          responseSchema: posterResponseSchema as any,
+          temperature: 0.6,
+        },
+      });
+
+      const posterData = JSON.parse(response.text || "{}");
+      posterData.mode = "nature";
+      return res.json({
+        success: true,
+        mode: "nature",
+        poster: posterData,
+      });
+    }
   } catch (error: any) {
     console.error("Error in /api/analyze-and-generate-poster:", error);
     res.status(500).json({
       success: false,
-      error: error.message || "Failed to generate poster data",
-    });
-  }
-});
-
-// POST: Refine or update poster with user instructions
-app.post("/api/refine-poster", async (req, res) => {
-  try {
-    const { currentPoster, userInstruction } = req.body;
-
-    const response = await ai.models.generateContent({
-      model: "gemini-3.8-flash",
-      contents: [
-        {
-          text: `当前自然科学图鉴海报的 JSON 数据如下：
-${JSON.stringify(currentPoster, null, 2)}
-
-用户的修改要求是：
-"${userInstruction}"
-
-请在保持专业自然科学插画科普海报的高级美感和9宫格完整结构的前提下，应用用户的修改并返回更新后的完整 JSON。`,
-        },
-      ],
-      config: {
-        systemInstruction: "你是一个专业的自然科学图鉴海报编辑与视觉总监。请严格返回符合 schema 的有效 JSON。",
-        responseMimeType: "application/json",
-        responseSchema: posterResponseSchema as any,
-        temperature: 0.5,
-      },
-    });
-
-    const updatedPoster = JSON.parse(response.text || "{}");
-    res.json({
-      success: true,
-      poster: updatedPoster,
-    });
-  } catch (error: any) {
-    console.error("Error in /api/refine-poster:", error);
-    res.status(500).json({
-      success: false,
-      error: error.message || "Failed to refine poster",
+      error: error.message || "Failed to generate data",
     });
   }
 });
@@ -304,7 +573,7 @@ async function startServer() {
   }
 
   app.listen(PORT, () => {
-    console.log(`NatureLens Infographic Poster Studio running on http://localhost:${PORT}`);
+    console.log(`NatureLens Studio (KP-onlyno999) running on http://localhost:${PORT}`);
   });
 }
 

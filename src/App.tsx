@@ -1,34 +1,67 @@
 import React, { useState, useRef } from "react";
-import { PosterData, ThemeConfig } from "./types/poster";
+import { PosterData, CharacterDesignSheetData, LookbookSheetData, ThemeConfig } from "./types/poster";
 import { PRESET_HUMMINGBIRD, THEME_CONFIGS } from "./data/presets";
+import { PRESET_BAMBOO_GUQIN } from "./data/characterPresets";
+import { PRESET_BLACK_TECHWEAR } from "./data/lookbookPresets";
 import { PosterHeader } from "./components/PosterHeader";
 import { HeroIllustration } from "./components/HeroIllustration";
 import { PosterModuleCard } from "./components/PosterModuleCard";
 import { PosterFooter } from "./components/PosterFooter";
+import { CharacterSheetCanvas } from "./components/CharacterSheetCanvas";
+import { LookbookCanvas } from "./components/LookbookCanvas";
 import { InspectorToolbar } from "./components/InspectorToolbar";
 import { AiStudioPanel } from "./components/AiStudioPanel";
-import { Edit3, Sparkles, Sliders, Eye } from "lucide-react";
 
 export default function App() {
+  const [currentMode, setCurrentMode] = useState<'nature' | 'character' | 'lookbook'>('lookbook');
   const [posterData, setPosterData] = useState<PosterData>(PRESET_HUMMINGBIRD);
-  const [selectedThemeKey, setSelectedThemeKey] = useState<string>("botanical-cream");
+  const [characterData, setCharacterData] = useState<CharacterDesignSheetData>(PRESET_BAMBOO_GUQIN);
+  const [lookbookData, setLookbookData] = useState<LookbookSheetData>(PRESET_BLACK_TECHWEAR);
+  
+  const [selectedThemeKey, setSelectedThemeKey] = useState<string>("obsidian-slate");
   const [langMode, setLangMode] = useState<'bilingual' | 'cn' | 'en'>('bilingual');
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [isAiStudioOpen, setIsAiStudioOpen] = useState<boolean>(false);
   const [customHeroImage, setCustomHeroImage] = useState<string | undefined>(undefined);
 
   const posterContainerRef = useRef<HTMLDivElement>(null);
-  const activeTheme: ThemeConfig = THEME_CONFIGS[selectedThemeKey] || THEME_CONFIGS["botanical-cream"];
+  const activeTheme: ThemeConfig = THEME_CONFIGS[selectedThemeKey] || THEME_CONFIGS["obsidian-slate"];
 
-  const handlePosterGenerated = (newPoster: PosterData, uploadedImage?: string) => {
-    setPosterData(newPoster);
-    if (uploadedImage) {
-      setCustomHeroImage(uploadedImage);
+  const handleGenerated = (result: {
+    mode: 'nature' | 'character' | 'lookbook';
+    poster?: PosterData;
+    characterSheet?: CharacterDesignSheetData;
+    lookbookSheet?: LookbookSheetData;
+    customImage?: string;
+  }) => {
+    setCurrentMode(result.mode);
+    if (result.mode === "lookbook" && result.lookbookSheet) {
+      setLookbookData(result.lookbookSheet);
+    } else if (result.mode === "character" && result.characterSheet) {
+      setCharacterData(result.characterSheet);
+    } else if (result.mode === "nature" && result.poster) {
+      setPosterData(result.poster);
+    }
+    if (result.customImage) {
+      setCustomHeroImage(result.customImage);
     }
   };
 
-  const handleSelectPreset = (preset: PosterData) => {
+  const handleSelectNaturePreset = (preset: PosterData) => {
+    setCurrentMode("nature");
     setPosterData(preset);
+    setCustomHeroImage(undefined);
+  };
+
+  const handleSelectCharacterPreset = (character: CharacterDesignSheetData) => {
+    setCurrentMode("character");
+    setCharacterData(character);
+    setCustomHeroImage(undefined);
+  };
+
+  const handleSelectLookbookPreset = (lookbook: LookbookSheetData) => {
+    setCurrentMode("lookbook");
+    setLookbookData(lookbook);
     setCustomHeroImage(undefined);
   };
 
@@ -36,17 +69,22 @@ export default function App() {
     <div className="min-h-screen bg-[#0e1310] text-[#e3e8e4] flex flex-col font-['Plus_Jakarta_Sans',sans-serif]">
       {/* Top Fixed Control Toolbar */}
       <InspectorToolbar
+        currentMode={currentMode}
+        onModeChange={setCurrentMode}
         currentPoster={posterData}
+        currentCharacter={characterData}
+        currentLookbook={lookbookData}
         selectedThemeKey={selectedThemeKey}
         onThemeChange={setSelectedThemeKey}
         langMode={langMode}
         onLangModeChange={setLangMode}
-        onSelectPreset={handleSelectPreset}
+        onSelectNaturePreset={handleSelectNaturePreset}
+        onSelectCharacterPreset={handleSelectCharacterPreset}
+        onSelectLookbookPreset={handleSelectLookbookPreset}
         onOpenAiStudio={() => setIsAiStudioOpen(true)}
         zoomLevel={zoomLevel}
         onZoomChange={setZoomLevel}
         posterElementRef={posterContainerRef}
-        onPosterUpdated={setPosterData}
       />
 
       {/* Main Studio Viewport */}
@@ -58,68 +96,104 @@ export default function App() {
             transformOrigin: "top center",
             transition: "transform 0.2s ease-out",
           }}
-          className="w-full max-w-[1020px] transition-all"
+          className="w-full max-w-[1080px] transition-all"
         >
-          {/* Naturalist Museum Poster Canvas */}
+          {/* Naturalist & Character & Lookbook Canvas */}
           <div
             ref={posterContainerRef}
             id="nature-poster-canvas"
-            className={`relative rounded-3xl p-6 sm:p-8 md:p-10 shadow-2xl border-2 border-[#2d4d3c]/30 transition-colors duration-500 overflow-hidden ${activeTheme.posterBgClass}`}
+            className={`relative rounded-3xl p-6 sm:p-8 md:p-10 shadow-2xl border-2 border-[#2d4d3c]/30 transition-colors duration-500 overflow-hidden ${
+              currentMode === "lookbook" ? "bg-[#f0f2f5]" : activeTheme.posterBgClass
+            }`}
             style={{
-              backgroundImage: activeTheme.paperTextureOverlay,
-              color: activeTheme.textColor,
+              backgroundImage: currentMode === "lookbook" ? undefined : activeTheme.paperTextureOverlay,
+              color: currentMode === "lookbook" ? "#1e293b" : activeTheme.textColor,
             }}
           >
-            {/* Museum Fine-Art Decorative Double Border */}
-            <div className="absolute inset-2 sm:inset-3 pointer-events-none rounded-2xl border border-[#2d6a4f]/25 border-dashed" />
-            <div className="absolute inset-4 sm:inset-5 pointer-events-none rounded-2xl border border-[#2d6a4f]/15" />
+            {/* Museum Fine-Art Decorative Double Border (for nature & character) */}
+            {currentMode !== "lookbook" && (
+              <>
+                <div className="absolute inset-2 sm:inset-3 pointer-events-none rounded-2xl border border-[#2d6a4f]/25 border-dashed" />
+                <div className="absolute inset-4 sm:inset-5 pointer-events-none rounded-2xl border border-[#2d6a4f]/15" />
+              </>
+            )}
 
-            {/* Top Corner Naturalist Vignettes / Plate Serial */}
-            <div className="flex items-center justify-between text-[10px] font-['Space_Mono',monospace] tracking-widest text-[#2d6a4f]/75 uppercase mb-2">
+            {/* Top Corner Vignettes / Plate Serial */}
+            <div className="flex items-center justify-between text-[10px] font-['Space_Mono',monospace] tracking-widest text-slate-500 uppercase mb-3">
               <span className="flex items-center gap-1.5 font-bold">
-                <span className="px-1.5 py-0.5 rounded bg-[#2d6a4f]/15 border border-[#2d6a4f]/30 text-[#1b4332]">SKILL: KP-onlyno999</span>
-                <span>NATURAL HISTORY MUSEUM · EXHIBITION PLATE NO. 042</span>
+                <span className="px-1.5 py-0.5 rounded bg-slate-800/10 border border-slate-700/20 text-slate-800">
+                  SKILL: KP-onlyno999
+                </span>
+                <span>
+                  {currentMode === "lookbook"
+                    ? "COMMERCIAL APPAREL PRODUCTION & MODEL SPECIFICATION"
+                    : currentMode === "character"
+                    ? "CHARACTER CONCEPT DESIGN SHEET · ARCHIVE NO. 088"
+                    : "NATURAL HISTORY MUSEUM · EXHIBITION PLATE NO. 042"}
+                </span>
               </span>
-              <span>BIOLOGICAL INFORMATION INFOGRAPHIC · TROCHILIDAE</span>
+              <span>
+                {currentMode === "lookbook"
+                  ? "TETRADIC COLUMN LAYOUT · 1:1:1:1"
+                  : currentMode === "character"
+                  ? "COSTUME & ORTHOGRAPHIC BREAKDOWN"
+                  : "BIOLOGICAL INFORMATION INFOGRAPHIC"}
+              </span>
             </div>
 
-            {/* Poster Header: Title, Taxonomy & Distribution */}
-            <PosterHeader
-              poster={posterData}
-              langMode={langMode}
-              theme={activeTheme}
-            />
-
-            {/* Center Master Hero Visual Illustration */}
-            <section className="my-5">
-              <HeroIllustration
-                theme={posterData.hero?.illustrationTheme || "hummingbird"}
-                customImage={customHeroImage || posterData.hero?.customImage}
-                accentColor={posterData.hero?.accentColor || activeTheme.accentColor}
-                quoteCn={posterData.hero?.quoteCn}
-                quoteEn={posterData.hero?.quoteEn}
+            {/* Render Mode Component */}
+            {currentMode === "lookbook" ? (
+              <LookbookCanvas
+                data={lookbookData}
+                langMode={langMode}
+                theme={activeTheme}
+                customImage={customHeroImage}
               />
-            </section>
-
-            {/* The 9 Modular Information Cards Grid */}
-            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
-              {posterData.modules && posterData.modules.map((module) => (
-                <PosterModuleCard
-                  key={module.number}
-                  module={module}
+            ) : currentMode === "character" ? (
+              <CharacterSheetCanvas
+                data={characterData}
+                langMode={langMode}
+                theme={activeTheme}
+                customImage={customHeroImage}
+              />
+            ) : (
+              /* Render 9-Grid Nature Infographic Mode */
+              <>
+                <PosterHeader
+                  poster={posterData}
                   langMode={langMode}
-                  accentColor={activeTheme.accentColor}
-                  themeCardBg={activeTheme.cardBgClass}
+                  theme={activeTheme}
                 />
-              ))}
-            </section>
 
-            {/* Poster Footer: Quotes & Ecology Metadata */}
-            <PosterFooter
-              footer={posterData.footer}
-              langMode={langMode}
-              theme={activeTheme}
-            />
+                <section className="my-5">
+                  <HeroIllustration
+                    theme={posterData.hero?.illustrationTheme || "hummingbird"}
+                    customImage={customHeroImage || posterData.hero?.customImage}
+                    accentColor={posterData.hero?.accentColor || activeTheme.accentColor}
+                    quoteCn={posterData.hero?.quoteCn}
+                    quoteEn={posterData.hero?.quoteEn}
+                  />
+                </section>
+
+                <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
+                  {posterData.modules && posterData.modules.map((module) => (
+                    <PosterModuleCard
+                      key={module.number}
+                      module={module}
+                      langMode={langMode}
+                      accentColor={activeTheme.accentColor}
+                      themeCardBg={activeTheme.cardBgClass}
+                    />
+                  ))}
+                </section>
+
+                <PosterFooter
+                  footer={posterData.footer}
+                  langMode={langMode}
+                  theme={activeTheme}
+                />
+              </>
+            )}
           </div>
         </div>
       </main>
@@ -128,7 +202,7 @@ export default function App() {
       <AiStudioPanel
         isOpen={isAiStudioOpen}
         onClose={() => setIsAiStudioOpen(false)}
-        onPosterGenerated={handlePosterGenerated}
+        onGenerated={handleGenerated}
       />
     </div>
   );
