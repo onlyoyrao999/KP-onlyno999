@@ -117,9 +117,14 @@ ${currentPoster.modules.map(m => `${m.number} ${m.titleCn} (${m.titleEn}): ${m.s
               <Sparkles className="w-4 h-4" />
             </span>
             <div>
-              <h1 className="font-['Noto_Serif_SC',serif] font-black text-sm tracking-wide text-white">
-                NatureLens
-              </h1>
+              <div className="flex items-center gap-1.5">
+                <h1 className="font-['Noto_Serif_SC',serif] font-black text-sm tracking-wide text-white">
+                  NatureLens
+                </h1>
+                <span className="text-[9px] px-1.5 py-0.2 rounded-md bg-emerald-900/60 border border-emerald-600/40 text-emerald-300 font-mono">
+                  KP-onlyno999
+                </span>
+              </div>
               <p className="text-[10px] text-emerald-400 font-['Space_Mono',monospace]">
                 自然科学图鉴海报设计室
               </p>

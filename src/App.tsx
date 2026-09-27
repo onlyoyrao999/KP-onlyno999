@@ -76,7 +76,10 @@ export default function App() {
 
             {/* Top Corner Naturalist Vignettes / Plate Serial */}
             <div className="flex items-center justify-between text-[10px] font-['Space_Mono',monospace] tracking-widest text-[#2d6a4f]/75 uppercase mb-2">
-              <span>NATURAL HISTORY MUSEUM · EXHIBITION PLATE NO. 042</span>
+              <span className="flex items-center gap-1.5 font-bold">
+                <span className="px-1.5 py-0.5 rounded bg-[#2d6a4f]/15 border border-[#2d6a4f]/30 text-[#1b4332]">SKILL: KP-onlyno999</span>
+                <span>NATURAL HISTORY MUSEUM · EXHIBITION PLATE NO. 042</span>
+              </span>
               <span>BIOLOGICAL INFORMATION INFOGRAPHIC · TROCHILIDAE</span>
             </div>
 
