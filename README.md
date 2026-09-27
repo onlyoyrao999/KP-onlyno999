@@ -1,6 +1,9 @@
 # 🌿 KP-onlyno999: 科普信息海报生成器 & 自然科学图鉴设计室
 
 > **Skill 名称**: `KP-onlyno999`  
+> **Skill 版本号**: `v1.0.0` (SemVer)  
+> **Schema 版本**: `2026.1`  
+> **发布日期**: `2026-09-27`  
 > **项目名称**: NatureLens · 自然科学与九宫格科普海报设计室 (Naturalist & Botanical Infographic Poster Studio)  
 > **核心能力**: 底图智能重塑 (Image-to-Infographic) ｜ 9宫格科学模块排版 ｜ 博物馆级写实插画 ｜ 中英双语排版 ｜ 4K高清导出
 

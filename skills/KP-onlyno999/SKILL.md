@@ -1,14 +1,32 @@
 ---
 name: "KP-onlyno999"
+version: "1.0.0"
+standard: "Naturalist-Infographic-v1"
+schema_version: "2026.1"
+release_date: "2026-09-27"
+author: "NatureLens Studio & Scientific Illustration Standards"
+status: "Active / Production"
 description: >
-  科普信息海报生成器与自然科学图鉴设计规范 (KP-onlyno999)。将用户提供的底图或自然科学主题智能重塑为博物馆级写实插画、九宫格模块化解剖/生理数据排版、中英双语对照的高质感信息图鉴海报。
+  科普信息海报生成器与自然科学图鉴设计规范 (KP-onlyno999 v1.0.0)。将用户提供的底图或自然科学主题智能重塑为博物馆级写实插画、九宫格模块化解剖/生理数据排版、中英双语对照的高质感信息图鉴海报。
 ---
 
 # KP-onlyno999: 自然科学图鉴与九宫格科普海报设计规范
 
+| 规范属性 | 详细参数 |
+| :--- | :--- |
+| **Skill 规范名称** | `KP-onlyno999` |
+| **规范版本号 (Version)** | `v1.0.0` (SemVer 语义化版本) |
+| **Schema 规范版本** | `2026.1` (Structured Poster JSON Schema) |
+| **发布日期 (Release Date)** | `2026-09-27` |
+| **核心架构** | 9宫格自然科学图鉴矩阵 (9-Grid Naturalist Infographic System) |
+| **多模态引擎** | Gemini 3.8 Flash Multimodal Vision Engine |
+| **状态** | `Active` / 生产级执行规范 |
+
+---
+
 ## 1. 概述与核心定位 (Overview)
 
-`KP-onlyno999` 是用于生成或重塑**自然科学科普信息海报、动植物解剖图谱、博物馆标本图鉴与生态信息展板**的专业技能规范。
+`KP-onlyno999`（版本 `v1.0.0`）是用于生成或重塑**自然科学科普信息海报、动植物解剖图谱、博物馆标本图鉴与生态信息展板**的专业技能规范。
 
 当用户提供任意一张生物（鸟类、昆虫、海洋生物、哺乳动物）、植物、微观结构或自然摄影作为底图时，或给出自然科学主题时，系统按照本规范所定义的【九宫格模块化自然科学图鉴】标准，将其提炼重塑为具有极高艺术美感、严谨科普数据与温润治愈氛围的高级信息海报。
 
