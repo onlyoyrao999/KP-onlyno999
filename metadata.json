@@ -1,0 +1,6 @@
+{
+  "name": "NatureLens - 自然科学与图鉴海报设计室",
+  "description": "智能将底图重塑为博物馆级自然科学插画与九宫格科普信息海报，具备双语排版、解剖图解、迁徙航线、高代谢心率与食物分布模块及高清导出。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
