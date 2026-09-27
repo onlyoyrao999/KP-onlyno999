@@ -203,36 +203,46 @@ export interface CharacterDesignSheetData {
 // 电商模特拍摄规范图 (Lookbook Tetradic Sheet)
 // ==========================================
 
+export interface FootwearLockSpec {
+  isEnforced: boolean; // 强制锁死鞋子不可截断
+  shoeType: string; // 如：经典复古低帮黑白板鞋、厚底机能战术靴、德训鞋
+  upperMaterial: string; // 头层牛皮 / 麂皮拼接 / 拒水尼龙
+  soleSpecs: string; // 3.0cm 耐磨防滑生胶大底 / 气垫中底
+  colorWay: string; // 哑光黑面 + 纯白侧边条 + 焦糖底
+  headToToeLockPhrase: string; // 强制提示词锁如: "full length head-to-toe shot, entire shoes clearly visible touching the floor, no cropped feet"
+}
+
 export interface LookbookColumnItem {
   colIndex: 1 | 2 | 3 | 4;
   shotType: 'headshot' | 'torso' | 'profile' | 'back';
-  labelCn: string; // e.g. "大头照 (正面)", "正面半身/全身", "侧面照 (轮廓)", "背面照 (背影)"
-  labelEn: string; // "Headshot (Frontal Focus)", "Torso / Full Body Front", "Profile / Side Silhouette", "Back View / Rear Fit"
-  focusAreaCn: string; // 重点展示：面部表情、帽子帽檐、衣领高度
+  labelCn: string;
+  labelEn: string;
+  focusAreaCn: string;
   focusAreaEn: string;
-  shotRatio: string; // "1:1 Close-up", "3:4 Full Body", etc.
+  shotRatio: string;
   keyDetails: string[];
 }
 
 export interface LookbookSheetData {
   mode: 'lookbook';
   id: string;
-  brandOrTitleCn: string; // e.g. "2024 夏季基础款工装全套打版展示"
-  brandOrTitleEn: string; // "Urban Techwear Minimalist Lookbook Sheet"
-  seasonTag: string; // "SS24 ESSENTIALS / 商业打版规范"
+  brandOrTitleCn: string;
+  brandOrTitleEn: string;
+  seasonTag: string;
   modelSpecs: {
-    genderAge: string; // "亚洲男性青年 / 身高185cm / 穿L码"
-    expression: string; // "中性克制表情，直视或自然微侧"
-    hairgrooming: string; // "清爽短发配极简黑色鸭舌帽"
+    genderAge: string;
+    expression: string;
+    hairgrooming: string;
   };
+  footwearLock: FootwearLockSpec; // 显化并锁死鞋子设计
   outfitBreakdown: {
     titleCn: string;
     items: Array<{ nameCn: string; nameEn: string; fabric: string; color: string; fitDesc: string }>;
   };
   lightingStudio: {
-    lightingType: string; // "影棚双侧八角柔光箱 (Softbox Diffused Lighting)"
-    background: string; // "中性灰白无影墙 (#e4e7eb)"
-    lensSpecs: string; // "85mm f/5.6 人像定焦 · 零透视畸变"
+    lightingType: string;
+    background: string;
+    lensSpecs: string;
   };
   columns: [LookbookColumnItem, LookbookColumnItem, LookbookColumnItem, LookbookColumnItem];
   colorPalette: {
@@ -242,11 +252,11 @@ export interface LookbookSheetData {
     swatches: Array<{ name: string; hex: string }>;
   };
   promptBundle: {
-    tetradicCollagePrompt: string; // 四联总拼图 Prompt
-    headshotPrompt: string; // 单独大头照 Prompt
-    frontShotPrompt: string; // 单独正面照 Prompt
-    profileShotPrompt: string; // 单独侧面照 Prompt
-    backShotPrompt: string; // 单独背面照 Prompt
+    tetradicCollagePrompt: string;
+    headshotPrompt: string;
+    frontShotPrompt: string;
+    profileShotPrompt: string;
+    backShotPrompt: string;
   };
 }
 

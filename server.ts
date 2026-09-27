@@ -288,7 +288,7 @@ const characterResponseSchema = {
   required: ["characterNameCn", "titleCn", "identityTag", "quoteCn", "views", "costumeDeconstruction", "materialGrid", "promptBundle"]
 };
 
-// 3. E-commerce Lookbook Schema
+// 3. E-commerce Lookbook Schema with Footwear Lock
 const lookbookResponseSchema = {
   type: Type.OBJECT,
   properties: {
@@ -296,7 +296,7 @@ const lookbookResponseSchema = {
     id: { type: Type.STRING },
     brandOrTitleCn: { type: Type.STRING, description: "展示标题，如：纯黑极简工装全套 · 上身打版规范" },
     brandOrTitleEn: { type: Type.STRING, description: "英文标题" },
-    seasonTag: { type: Type.STRING, description: "季度/规范标签，如：SS24 打版规范 · 商业商品图标准 (1:1:1:1)" },
+    seasonTag: { type: Type.STRING, description: "季度标签，如：SS24 打版规范 · 商业商品图标准 (1:1:1:1 四联分栏 · 头到脚鞋履全画幅锁死)" },
     modelSpecs: {
       type: Type.OBJECT,
       properties: {
@@ -305,6 +305,18 @@ const lookbookResponseSchema = {
         hairgrooming: { type: Type.STRING }
       },
       required: ["genderAge", "expression", "hairgrooming"]
+    },
+    footwearLock: {
+      type: Type.OBJECT,
+      properties: {
+        isEnforced: { type: Type.BOOLEAN },
+        shoeType: { type: Type.STRING, description: "锁死鞋型设计，如：经典复古低帮黑白板鞋、机能战术工装靴、德训鞋" },
+        upperMaterial: { type: Type.STRING, description: "鞋面材质与裁片" },
+        soleSpecs: { type: Type.STRING, description: "大底规格与厚度，如：3.2cm 纯白耐磨防滑生胶大底" },
+        colorWay: { type: Type.STRING, description: "鞋身配色方案" },
+        headToToeLockPhrase: { type: Type.STRING, description: "从头到脚防截断提示词锁定短语" }
+      },
+      required: ["isEnforced", "shoeType", "upperMaterial", "soleSpecs", "colorWay", "headToToeLockPhrase"]
     },
     outfitBreakdown: {
       type: Type.OBJECT,
@@ -337,7 +349,6 @@ const lookbookResponseSchema = {
     },
     columns: {
       type: Type.ARRAY,
-      description: "固定4个分栏：1.大头照 2.正面全身 3.侧面照 4.背面照",
       items: {
         type: Type.OBJECT,
         properties: {
@@ -375,16 +386,16 @@ const lookbookResponseSchema = {
     promptBundle: {
       type: Type.OBJECT,
       properties: {
-        tetradicCollagePrompt: { type: Type.STRING, description: "四联总拼图 Prompt" },
-        headshotPrompt: { type: Type.STRING, description: "单独大头照 Prompt" },
-        frontShotPrompt: { type: Type.STRING, description: "单独正面照 Prompt" },
-        profileShotPrompt: { type: Type.STRING, description: "单独侧面照 Prompt" },
-        backShotPrompt: { type: Type.STRING, description: "单独背面照 Prompt" }
+        tetradicCollagePrompt: { type: Type.STRING, description: "四联总拼图 Prompt（必须包含鞋履接地与完整头到脚防裁切锁定）" },
+        headshotPrompt: { type: Type.STRING },
+        frontShotPrompt: { type: Type.STRING, description: "正面全身（必须严格锁死鞋子并完整露出双脚落地）" },
+        profileShotPrompt: { type: Type.STRING, description: "侧面全身（必须严格锁死鞋身侧面轮廓）" },
+        backShotPrompt: { type: Type.STRING, description: "背面全身（必须严格锁死球鞋后跟与后裤管）" }
       },
       required: ["tetradicCollagePrompt", "headshotPrompt", "frontShotPrompt", "profileShotPrompt", "backShotPrompt"]
     }
   },
-  required: ["brandOrTitleCn", "modelSpecs", "outfitBreakdown", "columns", "colorPalette", "promptBundle"]
+  required: ["brandOrTitleCn", "modelSpecs", "footwearLock", "outfitBreakdown", "columns", "colorPalette", "promptBundle"]
 };
 
 // Unified Analysis Endpoint: Auto-detect Nature vs Character vs Lookbook
@@ -396,7 +407,7 @@ app.post("/api/analyze-and-generate-poster", async (req, res) => {
 
     if (!detectedMode) {
       const checkPrompt = `判断以下输入是属于：
-1. 'lookbook' (电商模特、服装打版、四联拼图、单品穿搭展示、商拍摄影)
+1. 'lookbook' (电商模特、服装打版、四联拼图、单品穿搭展示、商拍摄影、鞋服搭配)
 2. 'character' (古风/二次元人物立绘、设定集、三视图、仙侠玄幻武侠)
 3. 'nature' (自然科学动植物、鸟类、昆虫、海洋生物、植物科普图鉴)
 
@@ -426,21 +437,16 @@ app.post("/api/analyze-and-generate-poster", async (req, res) => {
       else detectedMode = "nature";
     }
 
-    // Step 2: Route to specific schema
     if (detectedMode === "lookbook") {
       const lookbookSystemPrompt = `你是一位世界顶级的时尚电商视觉总监与服装打版拍摄工程师（Skill: KP-onlyno999 - Lookbook Creator）。
 你的任务是将服装单品或搭配底图重塑为严格符合工业商业标准的【四联分栏式电商模特打版图鉴 (1:1:1:1 Tetradic Column Layout)】。
 
-核心设计框架：
-1. 版式结构：四联分栏式拼图（1:1:1:1 绝对规整纵向分割）：
-   - 第一栏（Headshot）：大头照特写，展示面部特征、帽子细节、衣领高度。
-   - 第二栏（Torso / Front）：正面全身/半身，展示衣服正面版型、裤子口袋、穿搭比例。
-   - 第三栏（Profile）：90度侧面照，展示袖长、帽子侧面深度、裤侧立体口袋、身形侧面。
-   - 第四栏（Back）：背面全身，展示肩线、后背版型平整度、后背腰身。
-2. 模特与服装：标准化与去艺术化，中性表情，真实还原纯棉/斜纹/尼龙面料质感。
-3. 影棚光影：5500K柔光箱双侧布光，纯浅灰白背景（#e6e8ec），85mm定焦零畸变。
-4. 标签系统：每栏底部配置深灰色标示条。
-5. Prompt Bundle：强调同一模特（Same Person）、同套服装（Identical Outfit）在四张分图中的绝对一致性。`;
+【强制构图与鞋履锁死规范 (CRITICAL FOOTWEAR LOCK)】：
+1. 构图必须为完整的从头到脚全画幅（full length head-to-toe shot）：绝对严禁截断脚踝或切除鞋子。
+2. 必须为整套服装设计并锁死具体的鞋履（Footwear Design & Lock）：明确鞋型（如复古低帮板鞋、厚底机能战术靴、德训鞋）、鞋面皮质/麂皮材质、生胶/发泡大底厚度与配色。
+3. 提示词中必须在全身镜头（第2、3、4栏及总拼图）中强制注入锁定短语：
+   '(full length head-to-toe shot, complete shoes visible resting on the studio floor, feet touching ground with soft contact shadow, no cropped feet, no cut-off legs)'。
+4. 四联分栏：第1栏大头特写、第2栏正面全身（带鞋）、第3栏90度侧面（带鞋侧轮廓）、第4栏背面全身（带鞋跟）。`;
 
       let userParts: any[] = [];
       if (imageBase64) {
@@ -452,8 +458,8 @@ app.post("/api/analyze-and-generate-poster", async (req, res) => {
         });
       }
       userParts.push({
-        text: `请为该服装底图/穿搭主题定制一份完整的四联电商模特打版规范数据：
-${customPrompt ? `定制要求：${customPrompt}` : "纯黑全套极简工装电商上身打版规范"}`,
+        text: `请为该服装底图/穿搭主题定制一份完整的四联电商模特打版规范数据，并对鞋履设计进行严格锁死：
+${customPrompt ? `定制要求：${customPrompt}` : "纯黑全套极简工装电商上身打版规范，强制锁死黑白复古球鞋设计"}`,
       });
 
       const response = await ai.models.generateContent({
