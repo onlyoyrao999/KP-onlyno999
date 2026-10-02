@@ -53,6 +53,20 @@
 - **跳色**：仅一至两处——赤红丝带、朱砂红铠甲 / 红绸 / 红对联块面，与墨绿成经典冷暖撞色
 - **笔法质感**：赛璐珞手绘（Cel-shaded 2D Animation）＋传统水墨飞白（Ink splatter / flying-white），手绘黑线勾边，纸张颗粒感，轻微 film grain
 
+## 风格母本 · 中国学派老美术片（母本：用户 2026-10-02 提供的参考视频）
+
+模式五的总风格定性，优先级高于一切单项描述——出图有没有「那个味」，先对这一节：
+
+- **血统**：上海美术电影制片厂黄金时代（《大闹天宫》《哪吒闹海》《天书奇谭》一脉）的中国学派传统手绘动画电影
+- **两层分离（最核心的识别点）**：人物层 = 赛璐珞手绘，简笔勾线、平涂上色，动作靠关键帧式的大姿态；背景层 = 中国水墨画，竹林 / 水泊 / 远山以国画笔意晕染、留白带雾。平的人压在写意的景上，两层泾渭分明，不许把人物也渲染成水墨渐变、更不许把背景画成照片
+- **戏曲与民间造型语言**：反派 / 神怪可脸谱化（兽面、浓眉环眼），服饰道具带装饰纹样——鱼鳞纹铠甲、云纹、水波纹衣边、兽角头盔、靠旗式飘带；正派素净（素袍＋一条红腰带就是全部装饰）
+- **民间配色法**：高纯度平色、大红大绿的浓烈对比（朱砂红对墨绿），靠色彩对撞撑气氛，不靠光影体积；红永远只给关键锚点（腰带 / 铠甲 / 飘带 / 红绸）
+- **背景画法**：青绿山水味的水墨晕染，近景实、远景虚化成雾，竹影 / 水纹 / 山石用写意笔触概括，不描细节
+
+英文风格锚（组装提示词时置于风格定位之首）：
+
+`classic Chinese animated feature film, golden-age Shanghai Animation Film Studio, Chinese school of animation, hand-drawn cel characters over Chinese ink painting background, opera-inspired decorative patterns and motifs, bold folk-art colors, vermillion red against ink green`
+
 ## 人物定式 · 简笔动画主角法（母本：用户 2026-10-02 提供的参考视频）
 
 从参考片（竹林水泊、白衣侠客 vs 红甲兽面妖将）逐帧拆出的角色画法，以后凡模式五的人物都按这套「主角化」重设计，不是给照片套滤镜：
@@ -66,11 +80,11 @@
 
 英文关键词包（组装提示词时并入风格定位）：
 
-`classic Chinese animation film style, golden-age Shanghai animated feature look, hand-drawn cel animation, simple economical black ink outlines, flat color fills, minimal one-step shading, minimalist facial features drawn with a few strokes, flowing ribbons and robe hems, ink wash painted background, retro Chinese cartoon protagonist character design`
+`classic Chinese animation film style, golden-age Shanghai animated feature look, Chinese school of animation, hand-drawn cel animation, simple economical black ink outlines, flat color fills, minimal one-step shading, minimalist facial features drawn with a few strokes, flowing ribbons and robe hems, opera-inspired costume patterns, ink wash painted background, retro Chinese cartoon protagonist character design`
 
 ## 提示词核心包（英文，组装时按图填实）
 
-- 风格定位：`Chinese wuxia anime style, hand-drawn traditional animation cel, dynamic action keyframe, ink wash details, retro anime aesthetic`
+- 风格定位：`classic Chinese animated feature film, golden-age Shanghai Animation Film Studio, Chinese school of animation, hand-drawn cel characters over Chinese ink painting background, opera-inspired decorative patterns and motifs, bold folk-art colors, dynamic action keyframe, ink wash details`
 - 场景与光影：`dense green bamboo forest, cinematic mist, dappled sunlight filtering through bamboo leaves, atmospheric depth`
 - 人物与动作：`agile swordsman in loose white hanfu robe with red sash, leaping upside down from bamboo stalks, holding twin daggers, fluid motion lines, dynamic aerial pose, facing a red-armored mythical warrior`
 - 构图张力：`dramatic dynamic perspective, high visual tension, film grain, anime screenshot`
@@ -90,5 +104,6 @@
 1. 主体面部 / 体型与原图一致（附图参考是否生效）；简笔动画主角法到位：简笔勾线、平涂色块、无写实渐变混入；动作设计式逐姿态核对：同一张脸、同一套服装、姿态数量齐
 2. 展板式四区齐全：Hero / 环境 / 拆解 / 01–04 细节网格，编号无错位
 3. 水墨定调：墨色打底、米白留白、跳色不超两处，无照片写实感混入
-4. 画面无乱码文字（编号数字除外）；中文标注已走后期合成
-5. 电影海报式：机位张力成立（低角度 / 纵深 / 敌暗我明），不是平铺站桩图；动作设计式：姿态真动态、有动势连贯，不是站姿排队
+4. 风格母本对位：中国学派两层分离成立（人物平涂赛璐珞、背景水墨写意）、戏曲纹样与民间浓色到位，不是日漫 / 3D / 写实味
+5. 画面无乱码文字（编号数字除外）；中文标注已走后期合成
+6. 电影海报式：机位张力成立（低角度 / 纵深 / 敌暗我明），不是平铺站桩图；动作设计式：姿态真动态、有动势连贯，不是站姿排队
