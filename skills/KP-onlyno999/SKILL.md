@@ -61,5 +61,5 @@ description: "智能图鉴制图引擎：电商服装四联打版图、角色概
 8. 模式四中文文字禁令：生成阶段的提示词一律加 `no readable text, no letters`，绝不让模型渲染中文；
    所有中文（标题、步骤说明、分量标注、贴士卡）在排版合成阶段用真实中文字体填入。
 9. 模式五简笔漫画定调与文字禁令：风格关键词锁死中国学派一系（`golden-age Shanghai Animation Film Studio / Chinese school of animation / hand-drawn cel characters over Chinese ink painting background / opera-inspired patterns / bold folk-art colors`）＋ `ink wash / ink splatter`，
-   人物造型另锁简笔动画主角法关键词（见参考文件），基底墨色＋米白留白＋跳色不超两处，不许漂成照片写实、日漫或 3D 味；生成提示词加 `no readable text, no letters, no Chinese characters`，
+   人物造型另锁简笔动画主角法关键词（见参考文件），基底墨色＋米白留白＋跳色不超两处，不许漂成照片写实、日漫或 3D 味；出图后必过胶片颗粒后期（老片转印质感：颗粒＋柔焦＋陈化＋暗角，参数见参考文件风格母本）；生成提示词加 `no readable text, no letters, no Chinese characters`，
    仅细节网格允许小号数字编号 01–04；中文标题与标注一律后期合成。
